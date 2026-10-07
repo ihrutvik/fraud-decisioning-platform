@@ -21,6 +21,10 @@ This repository demonstrates backend engineering beyond CRUD: tenant-scoped idem
 - Tenant-isolated reads and idempotency keys
 - PostgreSQL decision ledger with Flyway-managed constraints
 - Transactional outbox and Kafka relay using `FOR UPDATE SKIP LOCKED`
+- Automatic review-case creation for every `REVIEW` decision
+- Exclusive analyst leases with expiry and safe reassignment
+- Guarded approve/decline resolution with immutable audit history
+- Transactional `FRAUD_REVIEW_RESOLVED` events
 - Prometheus-ready Spring Boot Actuator endpoints
 - Unit tests, Docker Compose, CI, and executable API examples
 
@@ -51,7 +55,7 @@ The API is available on `http://localhost:8080`; health is exposed at `/actuator
 
 ## Production direction
 
-This is the third increment of a fourteen-step build. Planned work includes manual review, model shadowing, feedback ingestion, OpenTelemetry, security, SLOs, load testing, and AWS deployment patterns.
+This is the fourth increment of a fourteen-step build. Planned work includes model shadowing, feedback ingestion, OpenTelemetry, security, SLOs, load testing, and AWS deployment patterns.
 
 ## Technology
 

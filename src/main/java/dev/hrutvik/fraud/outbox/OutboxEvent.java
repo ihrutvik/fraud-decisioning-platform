@@ -16,6 +16,10 @@ public class OutboxEvent {
     protected OutboxEvent(){}
     private OutboxEvent(UUID id,UUID aggregateId,String eventType,String payload,Instant createdAt){this.id=id;this.aggregateId=aggregateId;this.eventType=eventType;this.payload=payload;this.createdAt=createdAt;}
     public static OutboxEvent forDecision(TransactionDecision d){String json="{\"decisionId\":\""+d.getId()+"\",\"transactionId\":\""+d.getTransactionId()+"\",\"outcome\":\""+d.getOutcome()+"\",\"score\":"+d.getScore()+"}";return new OutboxEvent(UUID.randomUUID(),d.getId(),"FRAUD_DECISION_CREATED",json,d.getCreatedAt());}
+    public static OutboxEvent forReviewResolution(UUID reviewId, UUID decisionId, String outcome, String analystId, Instant at){
+        String json="{\"reviewId\":\""+reviewId+"\",\"decisionId\":\""+decisionId+"\",\"outcome\":\""+outcome+"\",\"analystId\":\""+analystId+"\"}";
+        return new OutboxEvent(UUID.randomUUID(),reviewId,"FRAUD_REVIEW_RESOLVED",json,at);
+    }
     public UUID getId(){return id;} public UUID getAggregateId(){return aggregateId;} public String getPayload(){return payload;} public Instant getCreatedAt(){return createdAt;}
     public void markPublished(Instant when){publishedAt=when;}
 }

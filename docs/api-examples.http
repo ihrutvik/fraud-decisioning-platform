@@ -24,3 +24,23 @@ X-Tenant-Id: merchant-demo
 ### Activate draft (replace id with create response)
 POST http://localhost:8080/v1/rule-sets/00000000-0000-0000-0000-000000000099/activation
 X-Tenant-Id: merchant-demo
+
+### List open manual-review cases
+GET http://localhost:8080/v1/reviews
+X-Tenant-Id: merchant-demo
+
+### Claim a review for five minutes
+POST http://localhost:8080/v1/reviews/00000000-0000-0000-0000-000000000199/claim
+Content-Type: application/json
+X-Tenant-Id: merchant-demo
+X-Analyst-Id: analyst-7
+
+{"leaseSeconds":300}
+
+### Resolve a claimed review
+POST http://localhost:8080/v1/reviews/00000000-0000-0000-0000-000000000199/resolution
+Content-Type: application/json
+X-Tenant-Id: merchant-demo
+X-Analyst-Id: analyst-7
+
+{"resolution":"DECLINE","note":"Account takeover confirmed from linked activity"}

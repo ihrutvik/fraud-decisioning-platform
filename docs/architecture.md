@@ -6,8 +6,10 @@
 2. The service canonicalizes and fingerprints the request.
 3. Atomic Redis sliding windows count account, device, and IP attempts across every service instance.
 4. The active tenant rule-set version combines request and velocity signals into a bounded score, outcome, and reason codes.
-5. Decision evidence and an outbox event commit in one PostgreSQL transaction.
-6. A horizontally scalable relay leases unpublished events with `SKIP LOCKED` and publishes them to Kafka.
+5. Decision evidence, its outbox event, and any required review case commit in one PostgreSQL transaction.
+6. Analysts claim review cases through expiring leases; only the lease owner can resolve them.
+7. Resolution audit evidence and a follow-up outbox event commit atomically.
+8. A horizontally scalable relay leases unpublished events with `SKIP LOCKED` and publishes them to Kafka.
 
 ## Why this shape
 
@@ -20,7 +22,8 @@
 - **Deliberate degradation:** Redis outages use an explicit `FAIL_REVIEW` or `FAIL_OPEN` policy instead of an accidental availability/security trade-off.
 - **Immutable rule governance:** changes create a new draft version. Activation retires the previous version under a database lock and a partial unique index guarantees one active version per tenant.
 - **Reproducible decisions:** every ledger row records the rule-set version that generated its outcome; tenants without overrides inherit the default active rule set.
+- **Safe human decisions:** pessimistic row locking serializes claims and resolutions, leases recover abandoned work, and immutable audit events retain the actor for every transition.
 
 ## Evolution plan
 
-Subsequent increments will add Redis velocity windows, versioned rule sets, manual-review workflows, model shadowing, feedback ingestion, security, tracing, load tests, and AWS/EKS deployment assets.
+Subsequent increments will add model shadowing, feedback ingestion, security, tracing, load tests, and AWS/EKS deployment assets.
