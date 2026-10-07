@@ -1,0 +1,29 @@
+spring:
+  application.name: fraud-decisioning-platform
+  datasource:
+    url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/fraud}
+    username: ${DATABASE_USERNAME:fraud}
+    password: ${DATABASE_PASSWORD:fraud}
+  jpa:
+    open-in-view: false
+    hibernate.ddl-auto: validate
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+    producer:
+      acks: all
+      properties:
+        enable.idempotence: true
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      timeout: 500ms
+fraud:
+  velocity:
+    window-seconds: ${VELOCITY_WINDOW_SECONDS:300}
+    failure-policy: ${VELOCITY_FAILURE_POLICY:FAIL_REVIEW}
+management:
+  endpoints.web.exposure.include: health,info,prometheus
+  endpoint.health.probes.enabled: true
+server:
+  shutdown: graceful

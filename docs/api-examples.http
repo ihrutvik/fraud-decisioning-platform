@@ -1,0 +1,26 @@
+### Low-risk approval
+POST http://localhost:8080/v1/decisions
+Content-Type: application/json
+X-Tenant-Id: merchant-demo
+Idempotency-Key: checkout-2026-0001
+
+{"transactionId":"tx-10001","accountId":"acct-42","deviceId":"device-trusted-42","ipAddress":"203.0.113.10","amount":1499.00,"currency":"INR","billingCountry":"IN","ipCountry":"IN","cardPresent":false,"accountAgeDays":720}
+
+### High-risk decline: country mismatch + high value + CNP + new account
+POST http://localhost:8080/v1/decisions
+Content-Type: application/json
+X-Tenant-Id: merchant-demo
+Idempotency-Key: checkout-2026-0002
+
+{"transactionId":"tx-10002","accountId":"acct-new","deviceId":"device-new","ipAddress":"198.51.100.9","amount":2500.00,"currency":"USD","billingCountry":"US","ipCountry":"RU","cardPresent":false,"accountAgeDays":1}
+
+### Create immutable rule-set draft
+POST http://localhost:8080/v1/rule-sets
+Content-Type: application/json
+X-Tenant-Id: merchant-demo
+
+{"highValueThreshold":2500,"newAccountDays":14,"accountVelocityLimit":5,"ipVelocityLimit":12,"deviceVelocityLimit":4,"reviewThreshold":35,"declineThreshold":70}
+
+### Activate draft (replace id with create response)
+POST http://localhost:8080/v1/rule-sets/00000000-0000-0000-0000-000000000099/activation
+X-Tenant-Id: merchant-demo
