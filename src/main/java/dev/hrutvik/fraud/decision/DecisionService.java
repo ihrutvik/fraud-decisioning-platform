@@ -5,6 +5,7 @@ import dev.hrutvik.fraud.outbox.OutboxEventRepository;
 import dev.hrutvik.fraud.velocity.VelocityService;
 import dev.hrutvik.fraud.rules.RuleSetService;
 import dev.hrutvik.fraud.review.ReviewService;
+import dev.hrutvik.fraud.shadow.ShadowEvaluationService;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,9 +20,9 @@ import java.util.UUID;
 
 @Service
 public class DecisionService {
-    private final TransactionDecisionRepository decisions; private final OutboxEventRepository outbox; private final RiskEngine riskEngine; private final VelocityService velocity; private final RuleSetService ruleSets; private final ReviewService reviews; private final Clock clock;
-    public DecisionService(TransactionDecisionRepository decisions, OutboxEventRepository outbox, RiskEngine riskEngine, VelocityService velocity,RuleSetService ruleSets,ReviewService reviews) { this(decisions,outbox,riskEngine,velocity,ruleSets,reviews,Clock.systemUTC()); }
-    DecisionService(TransactionDecisionRepository decisions, OutboxEventRepository outbox, RiskEngine riskEngine, VelocityService velocity,RuleSetService ruleSets,ReviewService reviews,Clock clock) { this.decisions=decisions; this.outbox=outbox; this.riskEngine=riskEngine; this.velocity=velocity; this.ruleSets=ruleSets; this.reviews=reviews; this.clock=clock; }
+    private final TransactionDecisionRepository decisions; private final OutboxEventRepository outbox; private final RiskEngine riskEngine; private final VelocityService velocity; private final RuleSetService ruleSets; private final ReviewService reviews; private final ShadowEvaluationService shadow; private final Clock clock;
+    public DecisionService(TransactionDecisionRepository decisions, OutboxEventRepository outbox, RiskEngine riskEngine, VelocityService velocity,RuleSetService ruleSets,ReviewService reviews,ShadowEvaluationService shadow) { this(decisions,outbox,riskEngine,velocity,ruleSets,reviews,shadow,Clock.systemUTC()); }
+    DecisionService(TransactionDecisionRepository decisions, OutboxEventRepository outbox, RiskEngine riskEngine, VelocityService velocity,RuleSetService ruleSets,ReviewService reviews,ShadowEvaluationService shadow,Clock clock) { this.decisions=decisions; this.outbox=outbox; this.riskEngine=riskEngine; this.velocity=velocity; this.ruleSets=ruleSets; this.reviews=reviews; this.shadow=shadow; this.clock=clock; }
 
     @Transactional
     public DecisionResponse decide(String tenantId, String idempotencyKey, DecisionRequest request) {
@@ -41,6 +42,7 @@ public class DecisionService {
         }
         outbox.save(OutboxEvent.forDecision(decision));
         if (decision.getOutcome() == DecisionOutcome.REVIEW) reviews.open(decision, now);
+        shadow.evaluate(decision, request, velocitySnapshot, now);
         return DecisionResponse.from(decision, false);
     }
     @Transactional(readOnly=true)

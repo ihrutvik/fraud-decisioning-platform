@@ -25,6 +25,9 @@ This repository demonstrates backend engineering beyond CRUD: tenant-scoped idem
 - Exclusive analyst leases with expiry and safe reassignment
 - Guarded approve/decline resolution with immutable audit history
 - Transactional `FRAUD_REVIEW_RESOLVED` events
+- Non-blocking shadow-model scoring beside the production rules
+- Versioned shadow evidence with production-vs-candidate disagreement tracking
+- Prometheus disagreement counters for safe promotion decisions
 - Prometheus-ready Spring Boot Actuator endpoints
 - Unit tests, Docker Compose, CI, and executable API examples
 
@@ -55,7 +58,7 @@ The API is available on `http://localhost:8080`; health is exposed at `/actuator
 
 ## Production direction
 
-This is the fourth increment of a fourteen-step build. Planned work includes model shadowing, feedback ingestion, OpenTelemetry, security, SLOs, load testing, and AWS deployment patterns.
+This is the fifth increment of a fourteen-step build. Planned work includes feedback ingestion, OpenTelemetry, security, SLOs, load testing, and AWS deployment patterns.
 
 ## Technology
 

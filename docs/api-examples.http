@@ -44,3 +44,7 @@ X-Tenant-Id: merchant-demo
 X-Analyst-Id: analyst-7
 
 {"resolution":"DECLINE","note":"Account takeover confirmed from linked activity"}
+
+### Inspect the candidate model's shadow evaluation
+GET http://localhost:8080/v1/decisions/00000000-0000-0000-0000-000000000299/shadow-evaluation
+X-Tenant-Id: merchant-demo

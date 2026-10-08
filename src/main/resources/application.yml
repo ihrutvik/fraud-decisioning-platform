@@ -19,6 +19,11 @@ spring:
       port: ${REDIS_PORT:6379}
       timeout: 500ms
 fraud:
+  shadow-model:
+    enabled: ${SHADOW_MODEL_ENABLED:true}
+    version: ${SHADOW_MODEL_VERSION:candidate-2026-10}
+    review-threshold: ${SHADOW_REVIEW_THRESHOLD:40}
+    decline-threshold: ${SHADOW_DECLINE_THRESHOLD:75}
   velocity:
     window-seconds: ${VELOCITY_WINDOW_SECONDS:300}
     failure-policy: ${VELOCITY_FAILURE_POLICY:FAIL_REVIEW}
