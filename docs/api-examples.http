@@ -48,3 +48,15 @@ X-Analyst-Id: analyst-7
 ### Inspect the candidate model's shadow evaluation
 GET http://localhost:8080/v1/decisions/00000000-0000-0000-0000-000000000299/shadow-evaluation
 X-Tenant-Id: merchant-demo
+
+### Ingest a verified chargeback label
+POST http://localhost:8080/v1/feedback
+Content-Type: application/json
+X-Tenant-Id: merchant-demo
+Idempotency-Key: chargeback-cb-8472
+
+{"decisionId":"00000000-0000-0000-0000-000000000299","label":"CONFIRMED_FRAUD","source":"CHARGEBACK","externalReference":"cb-8472","observedAt":"2026-10-09T10:00:00Z"}
+
+### Retrieve a decision's feedback timeline
+GET http://localhost:8080/v1/feedback/decisions/00000000-0000-0000-0000-000000000299
+X-Tenant-Id: merchant-demo

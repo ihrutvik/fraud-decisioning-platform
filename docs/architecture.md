@@ -11,6 +11,7 @@
 7. Analysts claim review cases through expiring leases; only the lease owner can resolve them.
 8. Resolution audit evidence and a follow-up outbox event commit atomically.
 9. A horizontally scalable relay leases unpublished events with `SKIP LOCKED` and publishes them to Kafka.
+10. Delayed real-world outcomes are ingested as immutable labels and emitted for offline validation and training.
 
 ## Why this shape
 
@@ -25,7 +26,8 @@
 - **Reproducible decisions:** every ledger row records the rule-set version that generated its outcome; tenants without overrides inherit the default active rule set.
 - **Safe human decisions:** pessimistic row locking serializes claims and resolutions, leases recover abandoned work, and immutable audit events retain the actor for every transition.
 - **Safe model rollout:** candidate scores are versioned and persisted beside the production outcome. Disagreement metrics provide evidence for offline validation without exposing customers to an unproven model.
+- **Point-in-time feedback:** labels reference immutable decisions instead of mutating them. Tenant idempotency keys and source references prevent duplicate chargebacks or analyst outcomes from corrupting training data.
 
 ## Evolution plan
 
-Subsequent increments will add feedback ingestion, security, tracing, load tests, and AWS/EKS deployment assets.
+Subsequent increments will add security, tracing, load tests, and AWS/EKS deployment assets.

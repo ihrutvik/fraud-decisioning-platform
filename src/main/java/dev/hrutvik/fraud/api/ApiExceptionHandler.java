@@ -5,6 +5,7 @@ import dev.hrutvik.fraud.decision.IdempotencyConflictException;
 import dev.hrutvik.fraud.rules.RuleSetNotFoundException;
 import dev.hrutvik.fraud.review.*;
 import dev.hrutvik.fraud.shadow.ShadowEvaluationNotFoundException;
+import dev.hrutvik.fraud.feedback.FeedbackConflictException;
 import org.springframework.http.*;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
@@ -22,6 +23,8 @@ public class ApiExceptionHandler {
     ResponseEntity<ApiError> reviewNotFound(){return response(HttpStatus.NOT_FOUND,"REVIEW_NOT_FOUND","Review case was not found");}
     @ExceptionHandler(ShadowEvaluationNotFoundException.class)
     ResponseEntity<ApiError> shadowNotFound(){return response(HttpStatus.NOT_FOUND,"SHADOW_EVALUATION_NOT_FOUND","Shadow evaluation was not found");}
+    @ExceptionHandler(FeedbackConflictException.class)
+    ResponseEntity<ApiError> feedbackConflict(){return response(HttpStatus.CONFLICT,"FEEDBACK_IDEMPOTENCY_CONFLICT","Key was already used with different feedback");}
     @ExceptionHandler(ReviewConflictException.class)
     ResponseEntity<ApiError> reviewConflict(ReviewConflictException e){return response(HttpStatus.CONFLICT,"REVIEW_CONFLICT",e.getMessage());}
     @ExceptionHandler(IllegalArgumentException.class)

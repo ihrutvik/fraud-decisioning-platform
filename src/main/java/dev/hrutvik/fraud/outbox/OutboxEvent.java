@@ -1,6 +1,7 @@
 package dev.hrutvik.fraud.outbox;
 
 import dev.hrutvik.fraud.decision.TransactionDecision;
+import dev.hrutvik.fraud.feedback.DecisionFeedback;
 import jakarta.persistence.*;
 import java.time.Instant;
 import java.util.UUID;
@@ -20,6 +21,7 @@ public class OutboxEvent {
         String json="{\"reviewId\":\""+reviewId+"\",\"decisionId\":\""+decisionId+"\",\"outcome\":\""+outcome+"\",\"analystId\":\""+analystId+"\"}";
         return new OutboxEvent(UUID.randomUUID(),reviewId,"FRAUD_REVIEW_RESOLVED",json,at);
     }
+    public static OutboxEvent forFeedback(DecisionFeedback f){String json="{\"feedbackId\":\""+f.getId()+"\",\"decisionId\":\""+f.getDecisionId()+"\",\"label\":\""+f.getLabel()+"\",\"source\":\""+f.getSource()+"\"}";return new OutboxEvent(UUID.randomUUID(),f.getDecisionId(),"FRAUD_FEEDBACK_INGESTED",json,f.getCreatedAt());}
     public UUID getId(){return id;} public UUID getAggregateId(){return aggregateId;} public String getPayload(){return payload;} public Instant getCreatedAt(){return createdAt;}
     public void markPublished(Instant when){publishedAt=when;}
 }
