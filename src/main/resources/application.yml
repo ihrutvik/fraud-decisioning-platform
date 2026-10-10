@@ -19,6 +19,16 @@ spring:
       port: ${REDIS_PORT:6379}
       timeout: 500ms
 fraud:
+  security:
+    credentials:
+      - name: merchant-demo
+        tenant-id: merchant-demo
+        key-sha256: ${MERCHANT_API_KEY_SHA256:d09453e5d5a47120605987b7b9cda1e9469ccf81d6864edb0c9af39287900749}
+        scopes: [DECISIONS_WRITE, DECISIONS_READ, FEEDBACK_WRITE, FEEDBACK_READ, RULES_READ]
+      - name: analyst-demo
+        tenant-id: merchant-demo
+        key-sha256: ${ANALYST_API_KEY_SHA256:ba041bbd3d5f84055d10645d916eeace5ad28692224918c320e627f95bccbd3b}
+        scopes: [DECISIONS_READ, REVIEWS_READ, REVIEWS_WRITE, FEEDBACK_WRITE, FEEDBACK_READ, RULES_READ, RULES_WRITE, OPERATIONS_READ]
   shadow-model:
     enabled: ${SHADOW_MODEL_ENABLED:true}
     version: ${SHADOW_MODEL_VERSION:candidate-2026-10}

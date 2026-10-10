@@ -24,5 +24,10 @@ services:
   app:
     build: .
     depends_on: {postgres: {condition: service_healthy}, kafka: {condition: service_started}, redis: {condition: service_healthy}}
-    environment: {DATABASE_URL: jdbc:postgresql://postgres:5432/fraud, KAFKA_BOOTSTRAP_SERVERS: kafka:9092, REDIS_HOST: redis}
+    environment:
+      DATABASE_URL: jdbc:postgresql://postgres:5432/fraud
+      KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      REDIS_HOST: redis
+      MERCHANT_API_KEY_SHA256: d09453e5d5a47120605987b7b9cda1e9469ccf81d6864edb0c9af39287900749
+      ANALYST_API_KEY_SHA256: ba041bbd3d5f84055d10645d916eeace5ad28692224918c320e627f95bccbd3b
     ports: ["8080:8080"]

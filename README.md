@@ -31,6 +31,9 @@ This repository demonstrates backend engineering beyond CRUD: tenant-scoped idem
 - Immutable verified labels from chargebacks, reviews, customer reports, and payment networks
 - Payload-aware feedback idempotency plus source-reference deduplication
 - Transactional feedback events and label/source metrics for training-data pipelines
+- SHA-256 API-key authentication with constant-time verification
+- Credential-bound tenant isolation and least-privilege endpoint scopes
+- Structured `401` and `403` security responses; public health probes only
 - Prometheus-ready Spring Boot Actuator endpoints
 - Unit tests, Docker Compose, CI, and executable API examples
 
@@ -57,11 +60,11 @@ mvn clean package
 docker compose up --build
 ```
 
-The API is available on `http://localhost:8080`; health is exposed at `/actuator/health`.
+The API is available on `http://localhost:8080`; health is exposed at `/actuator/health`. Local examples use `demo-merchant-key` and `demo-analyst-key`; production configuration accepts only their SHA-256 digests through environment variables.
 
 ## Production direction
 
-This is the sixth increment of a fourteen-step build. Planned work includes OpenTelemetry, security, SLOs, load testing, and AWS deployment patterns.
+This is the seventh increment of a fourteen-step build. Planned work includes OpenTelemetry, SLOs, load testing, and AWS deployment patterns.
 
 ## Technology
 

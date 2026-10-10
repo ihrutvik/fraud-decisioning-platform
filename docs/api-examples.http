@@ -1,7 +1,9 @@
 ### Low-risk approval
+# Local development credentials are defined in application.yml. Replace them in production.
 POST http://localhost:8080/v1/decisions
 Content-Type: application/json
 X-Tenant-Id: merchant-demo
+X-API-Key: demo-merchant-key
 Idempotency-Key: checkout-2026-0001
 
 {"transactionId":"tx-10001","accountId":"acct-42","deviceId":"device-trusted-42","ipAddress":"203.0.113.10","amount":1499.00,"currency":"INR","billingCountry":"IN","ipCountry":"IN","cardPresent":false,"accountAgeDays":720}
@@ -10,6 +12,7 @@ Idempotency-Key: checkout-2026-0001
 POST http://localhost:8080/v1/decisions
 Content-Type: application/json
 X-Tenant-Id: merchant-demo
+X-API-Key: demo-merchant-key
 Idempotency-Key: checkout-2026-0002
 
 {"transactionId":"tx-10002","accountId":"acct-new","deviceId":"device-new","ipAddress":"198.51.100.9","amount":2500.00,"currency":"USD","billingCountry":"US","ipCountry":"RU","cardPresent":false,"accountAgeDays":1}
@@ -18,22 +21,26 @@ Idempotency-Key: checkout-2026-0002
 POST http://localhost:8080/v1/rule-sets
 Content-Type: application/json
 X-Tenant-Id: merchant-demo
+X-API-Key: demo-analyst-key
 
 {"highValueThreshold":2500,"newAccountDays":14,"accountVelocityLimit":5,"ipVelocityLimit":12,"deviceVelocityLimit":4,"reviewThreshold":35,"declineThreshold":70}
 
 ### Activate draft (replace id with create response)
 POST http://localhost:8080/v1/rule-sets/00000000-0000-0000-0000-000000000099/activation
 X-Tenant-Id: merchant-demo
+X-API-Key: demo-analyst-key
 
 ### List open manual-review cases
 GET http://localhost:8080/v1/reviews
 X-Tenant-Id: merchant-demo
+X-API-Key: demo-analyst-key
 
 ### Claim a review for five minutes
 POST http://localhost:8080/v1/reviews/00000000-0000-0000-0000-000000000199/claim
 Content-Type: application/json
 X-Tenant-Id: merchant-demo
 X-Analyst-Id: analyst-7
+X-API-Key: demo-analyst-key
 
 {"leaseSeconds":300}
 
@@ -42,17 +49,20 @@ POST http://localhost:8080/v1/reviews/00000000-0000-0000-0000-000000000199/resol
 Content-Type: application/json
 X-Tenant-Id: merchant-demo
 X-Analyst-Id: analyst-7
+X-API-Key: demo-analyst-key
 
 {"resolution":"DECLINE","note":"Account takeover confirmed from linked activity"}
 
 ### Inspect the candidate model's shadow evaluation
 GET http://localhost:8080/v1/decisions/00000000-0000-0000-0000-000000000299/shadow-evaluation
 X-Tenant-Id: merchant-demo
+X-API-Key: demo-merchant-key
 
 ### Ingest a verified chargeback label
 POST http://localhost:8080/v1/feedback
 Content-Type: application/json
 X-Tenant-Id: merchant-demo
+X-API-Key: demo-merchant-key
 Idempotency-Key: chargeback-cb-8472
 
 {"decisionId":"00000000-0000-0000-0000-000000000299","label":"CONFIRMED_FRAUD","source":"CHARGEBACK","externalReference":"cb-8472","observedAt":"2026-10-09T10:00:00Z"}
@@ -60,3 +70,4 @@ Idempotency-Key: chargeback-cb-8472
 ### Retrieve a decision's feedback timeline
 GET http://localhost:8080/v1/feedback/decisions/00000000-0000-0000-0000-000000000299
 X-Tenant-Id: merchant-demo
+X-API-Key: demo-merchant-key

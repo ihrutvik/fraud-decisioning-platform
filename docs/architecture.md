@@ -3,15 +3,16 @@
 ## Decision path
 
 1. A tenant submits a transaction with an idempotency key.
-2. The service canonicalizes and fingerprints the request.
-3. Atomic Redis sliding windows count account, device, and IP attempts across every service instance.
-4. The active tenant rule-set version combines request and velocity signals into a bounded score, outcome, and reason codes.
-5. The candidate model evaluates the same evidence in shadow mode but cannot change the customer-facing outcome.
-6. Decision evidence, shadow evidence, its outbox event, and any required review case commit in one PostgreSQL transaction.
-7. Analysts claim review cases through expiring leases; only the lease owner can resolve them.
-8. Resolution audit evidence and a follow-up outbox event commit atomically.
-9. A horizontally scalable relay leases unpublished events with `SKIP LOCKED` and publishes them to Kafka.
-10. Delayed real-world outcomes are ingested as immutable labels and emitted for offline validation and training.
+2. A constant-time API-key check binds the caller to one tenant and an explicit set of endpoint scopes.
+3. The service canonicalizes and fingerprints the request.
+4. Atomic Redis sliding windows count account, device, and IP attempts across every service instance.
+5. The active tenant rule-set version combines request and velocity signals into a bounded score, outcome, and reason codes.
+6. The candidate model evaluates the same evidence in shadow mode but cannot change the customer-facing outcome.
+7. Decision evidence, shadow evidence, its outbox event, and any required review case commit in one PostgreSQL transaction.
+8. Analysts claim review cases through expiring leases; only the lease owner can resolve them.
+9. Resolution audit evidence and a follow-up outbox event commit atomically.
+10. A horizontally scalable relay leases unpublished events with `SKIP LOCKED` and publishes them to Kafka.
+11. Delayed real-world outcomes are ingested as immutable labels and emitted for offline validation and training.
 
 ## Why this shape
 
@@ -27,7 +28,8 @@
 - **Safe human decisions:** pessimistic row locking serializes claims and resolutions, leases recover abandoned work, and immutable audit events retain the actor for every transition.
 - **Safe model rollout:** candidate scores are versioned and persisted beside the production outcome. Disagreement metrics provide evidence for offline validation without exposing customers to an unproven model.
 - **Point-in-time feedback:** labels reference immutable decisions instead of mutating them. Tenant idempotency keys and source references prevent duplicate chargebacks or analyst outcomes from corrupting training data.
+- **Identity before tenancy:** callers cannot select an arbitrary tenant with a header. Stored credentials contain only SHA-256 digests, comparisons are constant-time, and each credential is bound to one tenant and explicit scopes.
 
 ## Evolution plan
 
-Subsequent increments will add security, tracing, load tests, and AWS/EKS deployment assets.
+Subsequent increments will add tracing, load tests, and AWS/EKS deployment assets.
