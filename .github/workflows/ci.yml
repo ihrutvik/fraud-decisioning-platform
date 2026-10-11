@@ -9,4 +9,5 @@ jobs:
       - uses: actions/setup-java@v5
         with: {distribution: temurin, java-version: '17', cache: maven}
       - run: mvn --batch-mode verify
+      - run: docker compose config --quiet
       - run: docker build -t fraud-decisioning-platform:${{ github.sha }} .

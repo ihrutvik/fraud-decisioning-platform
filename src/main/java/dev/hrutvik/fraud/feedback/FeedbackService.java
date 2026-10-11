@@ -3,6 +3,7 @@ package dev.hrutvik.fraud.feedback;
 import dev.hrutvik.fraud.decision.*;
 import dev.hrutvik.fraud.outbox.*;
 import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.observation.annotation.Observed;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,7 +17,7 @@ public class FeedbackService {
     private final DecisionFeedbackRepository feedback; private final TransactionDecisionRepository decisions; private final OutboxEventRepository outbox; private final MeterRegistry metrics; private final Clock clock;
     public FeedbackService(DecisionFeedbackRepository feedback,TransactionDecisionRepository decisions,OutboxEventRepository outbox,MeterRegistry metrics){this(feedback,decisions,outbox,metrics,Clock.systemUTC());}
     FeedbackService(DecisionFeedbackRepository feedback,TransactionDecisionRepository decisions,OutboxEventRepository outbox,MeterRegistry metrics,Clock clock){this.feedback=feedback;this.decisions=decisions;this.outbox=outbox;this.metrics=metrics;this.clock=clock;}
-    @Transactional public FeedbackResponse ingest(String tenant,String key,FeedbackRequest request){
+    @Transactional @Observed(name="fraud.feedback",contextualName="ingest-fraud-feedback") public FeedbackResponse ingest(String tenant,String key,FeedbackRequest request){
         String fingerprint=fingerprint(request); var existing=feedback.findByTenantIdAndIdempotencyKey(tenant,key); if(existing.isPresent()) return replay(existing.get(),fingerprint);
         decisions.findByIdAndTenantId(request.decisionId(),tenant).orElseThrow(DecisionNotFoundException::new);
         var now=clock.instant(); var record=new DecisionFeedback(UUID.randomUUID(),tenant,request.decisionId(),key,fingerprint,request.label(),request.source(),request.externalReference().trim(),request.observedAt(),now);

@@ -29,7 +29,8 @@
 - **Safe model rollout:** candidate scores are versioned and persisted beside the production outcome. Disagreement metrics provide evidence for offline validation without exposing customers to an unproven model.
 - **Point-in-time feedback:** labels reference immutable decisions instead of mutating them. Tenant idempotency keys and source references prevent duplicate chargebacks or analyst outcomes from corrupting training data.
 - **Identity before tenancy:** callers cannot select an arbitrary tenant with a header. Stored credentials contain only SHA-256 digests, comparisons are constant-time, and each credential is bound to one tenant and explicit scopes.
+- **Trace asynchronous work:** HTTP spans continue through observed domain operations and Kafka producer headers. Correlation IDs remain a separate, sanitized operator-facing identifier while W3C trace context supplies causal linkage.
 
 ## Evolution plan
 
-Subsequent increments will add tracing, load tests, and AWS/EKS deployment assets.
+Subsequent increments will add SLOs, load tests, and AWS/EKS deployment assets.

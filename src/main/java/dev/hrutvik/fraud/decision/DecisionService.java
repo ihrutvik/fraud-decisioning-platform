@@ -6,6 +6,7 @@ import dev.hrutvik.fraud.velocity.VelocityService;
 import dev.hrutvik.fraud.rules.RuleSetService;
 import dev.hrutvik.fraud.review.ReviewService;
 import dev.hrutvik.fraud.shadow.ShadowEvaluationService;
+import io.micrometer.observation.annotation.Observed;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,6 +26,7 @@ public class DecisionService {
     DecisionService(TransactionDecisionRepository decisions, OutboxEventRepository outbox, RiskEngine riskEngine, VelocityService velocity,RuleSetService ruleSets,ReviewService reviews,ShadowEvaluationService shadow,Clock clock) { this.decisions=decisions; this.outbox=outbox; this.riskEngine=riskEngine; this.velocity=velocity; this.ruleSets=ruleSets; this.reviews=reviews; this.shadow=shadow; this.clock=clock; }
 
     @Transactional
+    @Observed(name="fraud.decision",contextualName="evaluate-fraud-decision")
     public DecisionResponse decide(String tenantId, String idempotencyKey, DecisionRequest request) {
         String fingerprint = fingerprint(request);
         var existing = decisions.findByTenantIdAndIdempotencyKey(tenantId, idempotencyKey);

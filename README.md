@@ -34,6 +34,9 @@ This repository demonstrates backend engineering beyond CRUD: tenant-scoped idem
 - SHA-256 API-key authentication with constant-time verification
 - Credential-bound tenant isolation and least-privilege endpoint scopes
 - Structured `401` and `403` security responses; public health probes only
+- OpenTelemetry traces for HTTP, decision, review, feedback, outbox, and Kafka paths
+- W3C trace propagation to Kafka with trace/span/correlation IDs in logs
+- OTLP export, configurable sampling, and a local Jaeger trace explorer
 - Prometheus-ready Spring Boot Actuator endpoints
 - Unit tests, Docker Compose, CI, and executable API examples
 
@@ -60,11 +63,11 @@ mvn clean package
 docker compose up --build
 ```
 
-The API is available on `http://localhost:8080`; health is exposed at `/actuator/health`. Local examples use `demo-merchant-key` and `demo-analyst-key`; production configuration accepts only their SHA-256 digests through environment variables.
+The API is available on `http://localhost:8080`; health is exposed at `/actuator/health` and Jaeger at `http://localhost:16686`. Local examples use `demo-merchant-key` and `demo-analyst-key`; production configuration accepts only their SHA-256 digests through environment variables.
 
 ## Production direction
 
-This is the seventh increment of a fourteen-step build. Planned work includes OpenTelemetry, SLOs, load testing, and AWS deployment patterns.
+This is the eighth increment of a fourteen-step build. Planned work includes SLOs, load testing, and AWS deployment patterns.
 
 ## Technology
 
