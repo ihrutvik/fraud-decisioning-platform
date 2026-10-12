@@ -30,7 +30,8 @@
 - **Point-in-time feedback:** labels reference immutable decisions instead of mutating them. Tenant idempotency keys and source references prevent duplicate chargebacks or analyst outcomes from corrupting training data.
 - **Identity before tenancy:** callers cannot select an arbitrary tenant with a header. Stored credentials contain only SHA-256 digests, comparisons are constant-time, and each credential is bound to one tenant and explicit scopes.
 - **Trace asynchronous work:** HTTP spans continue through observed domain operations and Kafka producer headers. Correlation IDs remain a separate, sanitized operator-facing identifier while W3C trace context supplies causal linkage.
+- **SLOs over vanity metrics:** alerts measure customer availability, decision latency, delivery backlog, analyst pressure, and model disagreement. Metric labels remain bounded to prevent tenant or customer cardinality explosions.
 
 ## Evolution plan
 
-Subsequent increments will add SLOs, load tests, and AWS/EKS deployment assets.
+Subsequent increments will add load tests, resilience controls, and AWS/EKS deployment assets.

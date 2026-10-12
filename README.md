@@ -37,6 +37,8 @@ This repository demonstrates backend engineering beyond CRUD: tenant-scoped idem
 - OpenTelemetry traces for HTTP, decision, review, feedback, outbox, and Kafka paths
 - W3C trace propagation to Kafka with trace/span/correlation IDs in logs
 - OTLP export, configurable sampling, and a local Jaeger trace explorer
+- Domain counters and latency histograms without high-cardinality customer tags
+- Provisioned Prometheus alerts and Grafana dashboard for availability, p95 latency, review pressure, model drift, and outbox health
 - Prometheus-ready Spring Boot Actuator endpoints
 - Unit tests, Docker Compose, CI, and executable API examples
 
@@ -63,11 +65,11 @@ mvn clean package
 docker compose up --build
 ```
 
-The API is available on `http://localhost:8080`; health is exposed at `/actuator/health` and Jaeger at `http://localhost:16686`. Local examples use `demo-merchant-key` and `demo-analyst-key`; production configuration accepts only their SHA-256 digests through environment variables.
+The API is available on `http://localhost:8080`; health is exposed at `/actuator/health`, Jaeger at `http://localhost:16686`, Prometheus at `http://localhost:9090`, and Grafana at `http://localhost:3000`. Local examples use `demo-merchant-key` and `demo-analyst-key`; production configuration accepts only their SHA-256 digests through environment variables.
 
 ## Production direction
 
-This is the eighth increment of a fourteen-step build. Planned work includes SLOs, load testing, and AWS deployment patterns.
+This is the ninth increment of a fourteen-step build. Planned work includes load testing, resilience controls, and AWS deployment patterns.
 
 ## Technology
 

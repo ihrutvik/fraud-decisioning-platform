@@ -1,0 +1,38 @@
+groups:
+  - name: fraud-platform-slos
+    rules:
+      - alert: FraudApiAvailabilityBurn
+        expr: sum(rate(http_server_requests_seconds_count{uri=~"/v1/.*",status=~"5.."}[5m])) / clamp_min(sum(rate(http_server_requests_seconds_count{uri=~"/v1/.*"}[5m])),0.001) > 0.005
+        for: 5m
+        labels: {severity: critical, slo: availability}
+        annotations: {summary: "Fraud API 5xx ratio exceeds the 99.5% availability objective"}
+      - alert: FraudDecisionLatencyHigh
+        expr: histogram_quantile(0.95,sum by (le)(rate(fraud_decision_latency_seconds_bucket[5m]))) > 0.2
+        for: 10m
+        labels: {severity: warning, slo: latency}
+        annotations: {summary: "Fraud decision p95 latency exceeds 200 ms"}
+      - alert: FraudDecisionErrorsHigh
+        expr: sum(rate(fraud_decision_errors_total[5m])) > 0.05
+        for: 5m
+        labels: {severity: critical}
+        annotations: {summary: "Decision evaluation errors are sustained"}
+      - alert: FraudReviewRatioHigh
+        expr: sum(rate(fraud_decisions_total{outcome="REVIEW",replayed="false"}[10m])) / clamp_min(sum(rate(fraud_decisions_total{replayed="false"}[10m])),0.001) > 0.30
+        for: 15m
+        labels: {severity: warning}
+        annotations: {summary: "More than 30% of new decisions require manual review"}
+      - alert: FraudReviewQueueBacklog
+        expr: fraud_review_queue{status="OPEN"} > 100
+        for: 15m
+        labels: {severity: warning}
+        annotations: {summary: "More than 100 fraud cases are awaiting analyst review"}
+      - alert: FraudOutboxDeliveryStalled
+        expr: fraud_outbox_backlog > 100
+        for: 5m
+        labels: {severity: critical}
+        annotations: {summary: "Kafka outbox backlog is not draining"}
+      - alert: ShadowModelDisagreementHigh
+        expr: sum(rate(fraud_shadow_evaluations_total{disagreed="true"}[15m])) / clamp_min(sum(rate(fraud_shadow_evaluations_total[15m])),0.001) > 0.10
+        for: 30m
+        labels: {severity: warning}
+        annotations: {summary: "Candidate model disagrees with production on over 10% of decisions"}

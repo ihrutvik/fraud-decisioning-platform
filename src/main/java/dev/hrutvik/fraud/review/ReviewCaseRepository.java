@@ -8,6 +8,7 @@ import java.util.*;
 public interface ReviewCaseRepository extends JpaRepository<ReviewCase,UUID> {
     Optional<ReviewCase> findByDecisionId(UUID decisionId);
     List<ReviewCase> findTop100ByTenantIdAndStatusOrderByCreatedAtAsc(String tenantId,ReviewStatus status);
+    long countByStatus(ReviewStatus status);
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("select r from ReviewCase r where r.id=:id and r.tenantId=:tenant")
     Optional<ReviewCase> lock(@Param("id") UUID id,@Param("tenant") String tenant);

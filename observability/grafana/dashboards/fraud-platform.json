@@ -1,0 +1,14 @@
+{
+  "annotations":{"list":[]},"editable":true,"graphTooltip":1,
+  "panels":[
+    {"type":"stat","title":"Decisions (5m)","id":1,"gridPos":{"h":7,"w":6,"x":0,"y":0},"targets":[{"expr":"sum(increase(fraud_decisions_total{replayed=\"false\"}[5m]))","refId":"A"}]},
+    {"type":"stat","title":"API 5xx ratio","id":2,"gridPos":{"h":7,"w":6,"x":6,"y":0},"fieldConfig":{"defaults":{"unit":"percentunit"}},"targets":[{"expr":"sum(rate(http_server_requests_seconds_count{uri=~\"/v1/.*\",status=~\"5..\"}[5m])) / clamp_min(sum(rate(http_server_requests_seconds_count{uri=~\"/v1/.*\"}[5m])),0.001)","refId":"A"}]},
+    {"type":"stat","title":"Decision p95","id":3,"gridPos":{"h":7,"w":6,"x":12,"y":0},"fieldConfig":{"defaults":{"unit":"s"}},"targets":[{"expr":"histogram_quantile(0.95,sum by (le)(rate(fraud_decision_latency_seconds_bucket[5m])))","refId":"A"}]},
+    {"type":"stat","title":"Outbox backlog","id":4,"gridPos":{"h":7,"w":6,"x":18,"y":0},"targets":[{"expr":"fraud_outbox_backlog","refId":"A"}]},
+    {"type":"timeseries","title":"Decision outcomes","id":5,"gridPos":{"h":9,"w":12,"x":0,"y":7},"targets":[{"expr":"sum by (outcome)(rate(fraud_decisions_total{replayed=\"false\"}[5m]))","legendFormat":"{{outcome}}","refId":"A"}]},
+    {"type":"timeseries","title":"Review queue","id":6,"gridPos":{"h":9,"w":12,"x":12,"y":7},"targets":[{"expr":"fraud_review_queue","legendFormat":"{{status}}","refId":"A"}]},
+    {"type":"timeseries","title":"Shadow-model disagreement","id":7,"gridPos":{"h":9,"w":12,"x":0,"y":16},"targets":[{"expr":"sum by (disagreed)(rate(fraud_shadow_evaluations_total[5m]))","legendFormat":"disagreed={{disagreed}}","refId":"A"}]},
+    {"type":"timeseries","title":"Verified feedback labels","id":8,"gridPos":{"h":9,"w":12,"x":12,"y":16},"targets":[{"expr":"sum by (label)(rate(fraud_feedback_ingested_total[5m]))","legendFormat":"{{label}}","refId":"A"}]}
+  ],
+  "refresh":"10s","schemaVersion":41,"tags":["fraud","slo","spring-boot"],"templating":{"list":[]},"time":{"from":"now-1h","to":"now"},"timezone":"browser","title":"Fraud Decisioning Platform","uid":"fraud-overview","version":1
+}

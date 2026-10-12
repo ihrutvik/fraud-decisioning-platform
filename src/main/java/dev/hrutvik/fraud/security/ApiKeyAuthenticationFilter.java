@@ -19,7 +19,8 @@ public class ApiKeyAuthenticationFilter extends OncePerRequestFilter {
     public ApiKeyAuthenticationFilter(ApiSecurityProperties properties){this.properties=properties;}
     @Override protected boolean shouldNotFilter(HttpServletRequest request){return request.getRequestURI().equals("/actuator/health")||request.getRequestURI().startsWith("/actuator/health/");}
     @Override protected void doFilterInternal(HttpServletRequest request,HttpServletResponse response,FilterChain chain)throws ServletException,IOException{
-        String raw=request.getHeader("X-API-Key");
+        String raw=request.getHeader("X-API-Key"); String authorization=request.getHeader("Authorization");
+        if((raw==null||raw.isBlank())&&authorization!=null&&authorization.startsWith("Bearer ")) raw=authorization.substring(7);
         if(raw==null||raw.isBlank()){unauthorized(response,"API key is required");return;}
         byte[] supplied=sha256(raw); ApiSecurityProperties.Credential match=null;
         for(var candidate:properties.getCredentials()){byte[] expected=hex(candidate.getKeySha256());if(expected.length==supplied.length&&MessageDigest.isEqual(expected,supplied)){match=candidate;break;}}
