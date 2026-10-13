@@ -10,4 +10,6 @@ jobs:
         with: {distribution: temurin, java-version: '17', cache: maven}
       - run: mvn --batch-mode verify
       - run: docker compose config --quiet
+      - run: docker run --rm -v "$PWD/load:/scripts:ro" grafana/k6:0.54.0 inspect /scripts/decision-load.js
+      - run: docker run --rm -v "$PWD/load:/scripts:ro" grafana/k6:0.54.0 inspect /scripts/idempotency-smoke.js
       - run: docker build -t fraud-decisioning-platform:${{ github.sha }} .

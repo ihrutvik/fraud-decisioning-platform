@@ -1,0 +1,25 @@
+name: performance-smoke
+on:
+  workflow_dispatch:
+permissions: {contents: read}
+jobs:
+  idempotency-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-java@v5
+        with: {distribution: temurin, java-version: '17', cache: maven}
+      - run: mvn --batch-mode -DskipTests package
+      - run: docker compose up --build -d postgres kafka redis jaeger app
+      - name: Wait for decision API
+        run: |
+          for attempt in {1..60}; do
+            curl --fail --silent http://localhost:8080/actuator/health && exit 0
+            sleep 2
+          done
+          docker compose logs app
+          exit 1
+      - run: docker compose --profile load run --rm k6 run /scripts/idempotency-smoke.js
+      - if: always()
+        run: docker compose --profile load down --volumes

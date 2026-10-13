@@ -39,6 +39,9 @@ This repository demonstrates backend engineering beyond CRUD: tenant-scoped idem
 - OTLP export, configurable sampling, and a local Jaeger trace explorer
 - Domain counters and latency histograms without high-cardinality customer tags
 - Provisioned Prometheus alerts and Grafana dashboard for availability, p95 latency, review pressure, model drift, and outbox health
+- k6 throughput profile with p95/p99 latency, error-rate, and dropped-iteration budgets
+- Executable idempotency smoke test covering exact replay and conflicting key reuse
+- Dual Kafka listeners for correct host and container-network routing
 - Prometheus-ready Spring Boot Actuator endpoints
 - Unit tests, Docker Compose, CI, and executable API examples
 
@@ -56,7 +59,7 @@ flowchart TD
   K --> D["Review and analytics"]
 ```
 
-See [the architecture decisions](docs/architecture.md) and [API examples](docs/api-examples.http).
+See [the architecture decisions](docs/architecture.md), [API examples](docs/api-examples.http), and [performance runbook](docs/performance.md).
 
 ## Run locally
 
@@ -69,11 +72,11 @@ The API is available on `http://localhost:8080`; health is exposed at `/actuator
 
 ## Production direction
 
-This is the ninth increment of a fourteen-step build. Planned work includes load testing, resilience controls, and AWS deployment patterns.
+This is the tenth increment of a fourteen-step build. Planned work includes resilience controls and AWS deployment patterns.
 
 ## Technology
 
-Java 17 · Spring Boot 3.5 · PostgreSQL 16 · Kafka · Redis · Flyway · Prometheus · Docker · GitHub Actions
+Java 17 · Spring Boot 3.5 · PostgreSQL 16 · Kafka · Redis · Flyway · Prometheus · Grafana · OpenTelemetry · k6 · Docker · GitHub Actions
 
 ## License
 

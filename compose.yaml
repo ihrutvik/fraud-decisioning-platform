@@ -10,10 +10,11 @@ services:
     environment:
       KAFKA_NODE_ID: 1
       KAFKA_PROCESS_ROLES: broker,controller
-      KAFKA_LISTENERS: PLAINTEXT://:9092,CONTROLLER://:9093
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
+      KAFKA_LISTENERS: EXTERNAL://:9092,BROKER://:29092,CONTROLLER://:9093
+      KAFKA_ADVERTISED_LISTENERS: EXTERNAL://localhost:9092,BROKER://kafka:29092
       KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: BROKER
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,BROKER:PLAINTEXT,EXTERNAL:PLAINTEXT
       KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka:9093
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
   redis:
@@ -26,7 +27,7 @@ services:
     depends_on: {postgres: {condition: service_healthy}, kafka: {condition: service_started}, redis: {condition: service_healthy}}
     environment:
       DATABASE_URL: jdbc:postgresql://postgres:5432/fraud
-      KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      KAFKA_BOOTSTRAP_SERVERS: kafka:29092
       REDIS_HOST: redis
       MERCHANT_API_KEY_SHA256: d09453e5d5a47120605987b7b9cda1e9469ccf81d6864edb0c9af39287900749
       ANALYST_API_KEY_SHA256: ba041bbd3d5f84055d10645d916eeace5ad28692224918c320e627f95bccbd3b
@@ -57,3 +58,13 @@ services:
       - ./observability/grafana/dashboards:/var/lib/grafana/dashboards:ro
     ports: ["3000:3000"]
     depends_on: {prometheus: {condition: service_started}}
+  k6:
+    image: grafana/k6:0.54.0
+    profiles: ["load"]
+    environment:
+      BASE_URL: http://app:8080
+      API_KEY: demo-merchant-key
+      TENANT_ID: merchant-demo
+    volumes: ["./load:/scripts:ro"]
+    command: ["run", "/scripts/decision-load.js"]
+    depends_on: {app: {condition: service_started}}
