@@ -23,6 +23,7 @@
 - **Safe horizontal scaling:** `FOR UPDATE SKIP LOCKED` partitions relay work without a separate coordinator.
 - **Exact velocity windows:** a Lua script atomically evicts expired observations, records the request, refreshes TTL, and counts the remaining set.
 - **Deliberate degradation:** Redis outages use an explicit `FAIL_REVIEW` or `FAIL_OPEN` policy instead of an accidental availability/security trade-off.
+- **Failure isolation:** repeated Redis connection failures open a local circuit before the dependency can consume the checkout latency budget. After a configurable recovery window, exactly one half-open probe tests recovery; concurrent requests continue through the selected degradation policy.
 - **Immutable rule governance:** changes create a new draft version. Activation retires the previous version under a database lock and a partial unique index guarantees one active version per tenant.
 - **Reproducible decisions:** every ledger row records the rule-set version that generated its outcome; tenants without overrides inherit the default active rule set.
 - **Safe human decisions:** pessimistic row locking serializes claims and resolutions, leases recover abandoned work, and immutable audit events retain the actor for every transition.
@@ -36,4 +37,4 @@
 
 ## Evolution plan
 
-Subsequent increments will add resilience controls and AWS/EKS deployment assets.
+Subsequent increments will add AWS/EKS deployment assets and final production hardening.

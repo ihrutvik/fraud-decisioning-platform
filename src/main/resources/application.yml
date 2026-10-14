@@ -37,6 +37,8 @@ fraud:
   velocity:
     window-seconds: ${VELOCITY_WINDOW_SECONDS:300}
     failure-policy: ${VELOCITY_FAILURE_POLICY:FAIL_REVIEW}
+    circuit-failure-threshold: ${VELOCITY_CIRCUIT_FAILURE_THRESHOLD:3}
+    circuit-open-seconds: ${VELOCITY_CIRCUIT_OPEN_SECONDS:30}
 management:
   endpoints.web.exposure.include: health,info,prometheus
   endpoint.health.probes.enabled: true

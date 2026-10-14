@@ -13,6 +13,7 @@ This repository demonstrates backend engineering beyond CRUD: tenant-scoped idem
 - Distributed account, device, and IP velocity rules using Redis sorted sets
 - Atomic sliding-window updates through a server-side Lua script
 - Configurable `FAIL_REVIEW` or `FAIL_OPEN` behavior during Redis outages
+- Redis circuit breaker with configurable failure threshold, timed recovery, and a single half-open probe
 - Immutable tenant-specific rule-set drafts with controlled activation
 - Database-enforced single active rule version per tenant
 - Exact rule-set version recorded with every decision for audit replay
@@ -72,7 +73,7 @@ The API is available on `http://localhost:8080`; health is exposed at `/actuator
 
 ## Production direction
 
-This is the tenth increment of a fourteen-step build. Planned work includes resilience controls and AWS deployment patterns.
+This is the eleventh increment of a fourteen-step build. Planned work includes AWS deployment patterns and final production hardening.
 
 ## Technology
 

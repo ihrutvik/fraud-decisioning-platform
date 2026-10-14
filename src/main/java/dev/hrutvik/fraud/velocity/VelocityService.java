@@ -7,6 +7,7 @@ import org.springframework.data.redis.RedisConnectionFailureException;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.script.DefaultRedisScript;
 import org.springframework.stereotype.Service;
+import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import java.time.Clock;
 import java.util.List;
 
@@ -25,22 +26,32 @@ public class VelocityService {
             return redis.call('ZCARD', key)
             """, Long.class);
 
-    private final StringRedisTemplate redis; private final VelocityProperties properties; private final Clock clock;
-    public VelocityService(StringRedisTemplate redis, VelocityProperties properties) { this(redis, properties, Clock.systemUTC()); }
-    VelocityService(StringRedisTemplate redis, VelocityProperties properties, Clock clock) { this.redis=redis; this.properties=properties; this.clock=clock; }
+    private final StringRedisTemplate redis; private final VelocityProperties properties; private final Clock clock; private final VelocityCircuitBreaker circuit;
+    public VelocityService(StringRedisTemplate redis, VelocityProperties properties, VelocityCircuitBreaker circuit) { this(redis, properties, Clock.systemUTC(), circuit); }
+    VelocityService(StringRedisTemplate redis, VelocityProperties properties, Clock clock) { this(redis, properties, clock, new VelocityCircuitBreaker(properties, new SimpleMeterRegistry(), clock)); }
+    VelocityService(StringRedisTemplate redis, VelocityProperties properties, Clock clock, VelocityCircuitBreaker circuit) { this.redis=redis; this.properties=properties; this.clock=clock; this.circuit=circuit; }
 
     public VelocitySnapshot recordAndCount(String tenant, String idempotencyKey, DecisionRequest request) {
+        var permit = circuit.acquire();
+        if (permit == VelocityCircuitBreaker.Permit.REJECTED) {
+            log.warn("Velocity circuit open; applying {} policy without calling Redis", properties.failurePolicy());
+            return unavailable();
+        }
         long now = clock.millis(); long cutoff = now - properties.windowSeconds() * 1000; long ttl = properties.windowSeconds() + 60;
         try {
             long account = count(key(tenant,"account",request.accountId()), cutoff, now, idempotencyKey, ttl);
             long ip = count(key(tenant,"ip",request.ipAddress()), cutoff, now, idempotencyKey, ttl);
             long device = count(key(tenant,"device",request.deviceId()), cutoff, now, idempotencyKey, ttl);
+            circuit.success(permit);
             return new VelocitySnapshot(account, ip, device, false, false);
         } catch (RedisConnectionFailureException ex) {
-            boolean review = properties.failurePolicy() == VelocityProperties.FailurePolicy.FAIL_REVIEW;
+            circuit.failure(permit);
             log.warn("Velocity store unavailable; applying {} policy", properties.failurePolicy());
-            return VelocitySnapshot.unavailable(review);
+            return unavailable();
         }
+    }
+    private VelocitySnapshot unavailable() {
+        return VelocitySnapshot.unavailable(properties.failurePolicy() == VelocityProperties.FailurePolicy.FAIL_REVIEW);
     }
     private long count(String key,long cutoff,long now,String member,long ttl) {
         Long value=redis.execute(WINDOW_SCRIPT, List.of(key), Long.toString(cutoff), Long.toString(now), member, Long.toString(ttl));
