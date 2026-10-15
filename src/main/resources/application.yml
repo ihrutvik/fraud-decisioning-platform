@@ -18,6 +18,7 @@ spring:
       host: ${REDIS_HOST:localhost}
       port: ${REDIS_PORT:6379}
       timeout: 500ms
+      ssl.enabled: ${REDIS_SSL_ENABLED:false}
 fraud:
   security:
     credentials:

@@ -1,0 +1,9 @@
+aws_region             = "eu-central-1"
+environment            = "production"
+vpc_id                 = "vpc-0123456789abcdef0"
+public_subnet_ids       = ["subnet-public-a", "subnet-public-b"]
+private_subnet_ids      = ["subnet-private-a", "subnet-private-b"]
+certificate_arn         = "arn:aws:acm:eu-central-1:123456789012:certificate/example"
+kafka_bootstrap_servers = "broker-1.example.amazonaws.com:9098,broker-2.example.amazonaws.com:9098"
+otel_traces_endpoint    = "https://otel-collector.example.com/v1/traces"
+image_tag               = "git-sha"

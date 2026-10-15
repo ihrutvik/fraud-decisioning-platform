@@ -43,6 +43,7 @@ This repository demonstrates backend engineering beyond CRUD: tenant-scoped idem
 - k6 throughput profile with p95/p99 latency, error-rate, and dropped-iteration budgets
 - Executable idempotency smoke test covering exact replay and conflicting key reuse
 - Dual Kafka listeners for correct host and container-network routing
+- Terraform reference deployment for private multi-AZ ECS Fargate, RDS PostgreSQL, ElastiCache Redis, ALB, ECR, Secrets Manager, and autoscaling
 - Prometheus-ready Spring Boot Actuator endpoints
 - Unit tests, Docker Compose, CI, and executable API examples
 
@@ -60,7 +61,7 @@ flowchart TD
   K --> D["Review and analytics"]
 ```
 
-See [the architecture decisions](docs/architecture.md), [API examples](docs/api-examples.http), and [performance runbook](docs/performance.md).
+See [the architecture decisions](docs/architecture.md), [API examples](docs/api-examples.http), [performance runbook](docs/performance.md), and [AWS deployment guide](deploy/aws/README.md).
 
 ## Run locally
 
@@ -73,7 +74,7 @@ The API is available on `http://localhost:8080`; health is exposed at `/actuator
 
 ## Production direction
 
-This is the eleventh increment of a fourteen-step build. Planned work includes AWS deployment patterns and final production hardening.
+This is the twelfth increment of a fourteen-step build. Planned work focuses on final production hardening and release evidence.
 
 ## Technology
 

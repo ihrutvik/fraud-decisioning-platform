@@ -34,7 +34,9 @@
 - **SLOs over vanity metrics:** alerts measure customer availability, decision latency, delivery backlog, analyst pressure, and model disagreement. Metric labels remain bounded to prevent tenant or customer cardinality explosions.
 - **Performance as a contract:** k6 thresholds turn latency, error rate, and dropped work into executable release evidence. A separate smoke profile continuously protects the API's idempotency contract without making normal CI depend on noisy shared-runner benchmarks.
 - **Two Kafka network planes:** containers receive broker metadata for `kafka:29092` while host tools receive `localhost:9092`, avoiding the common advertised-listener failure where a client connects successfully and then receives an unreachable broker address.
+- **AWS failure-domain separation:** the reference deployment spreads Fargate tasks and stateful services across availability zones, keeps compute and data stores private, terminates TLS at the ALB, and rolls back unhealthy task revisions automatically.
+- **Infrastructure ownership boundaries:** the service stack consumes an existing VPC and Kafka endpoints. Network topology and MSK authentication remain platform-level concerns instead of being recreated or weakened inside each application repository.
 
 ## Evolution plan
 
-Subsequent increments will add AWS/EKS deployment assets and final production hardening.
+Subsequent increments focus on final production hardening and release evidence.
