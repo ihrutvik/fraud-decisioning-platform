@@ -44,6 +44,9 @@ This repository demonstrates backend engineering beyond CRUD: tenant-scoped idem
 - Executable idempotency smoke test covering exact replay and conflicting key reuse
 - Dual Kafka listeners for correct host and container-network routing
 - Terraform reference deployment for private multi-AZ ECS Fargate, RDS PostgreSQL, ElastiCache Redis, ALB, ECR, Secrets Manager, and autoscaling
+- PostgreSQL 16 integration tests proving migrations and database-enforced fraud invariants
+- Weekly dependency maintenance across Maven, Docker, Terraform, and GitHub Actions
+- Commit-labelled container builds plus downloadable JAR checksums
 - Prometheus-ready Spring Boot Actuator endpoints
 - Unit tests, Docker Compose, CI, and executable API examples
 
@@ -61,7 +64,7 @@ flowchart TD
   K --> D["Review and analytics"]
 ```
 
-See [the architecture decisions](docs/architecture.md), [API examples](docs/api-examples.http), [performance runbook](docs/performance.md), and [AWS deployment guide](deploy/aws/README.md).
+See [the architecture decisions](docs/architecture.md), [API examples](docs/api-examples.http), [performance runbook](docs/performance.md), [threat model](docs/threat-model.md), [release checklist](docs/release-checklist.md), and [AWS deployment guide](deploy/aws/README.md).
 
 ## Run locally
 
@@ -74,7 +77,7 @@ The API is available on `http://localhost:8080`; health is exposed at `/actuator
 
 ## Production direction
 
-This is the twelfth increment of a fourteen-step build. Planned work focuses on final production hardening and release evidence.
+This is the thirteenth increment of a fourteen-step build. The final increment will package the recruiter-facing launch release.
 
 ## Technology
 

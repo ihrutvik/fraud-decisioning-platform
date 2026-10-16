@@ -36,7 +36,9 @@
 - **Two Kafka network planes:** containers receive broker metadata for `kafka:29092` while host tools receive `localhost:9092`, avoiding the common advertised-listener failure where a client connects successfully and then receives an unreachable broker address.
 - **AWS failure-domain separation:** the reference deployment spreads Fargate tasks and stateful services across availability zones, keeps compute and data stores private, terminates TLS at the ALB, and rolls back unhealthy task revisions automatically.
 - **Infrastructure ownership boundaries:** the service stack consumes an existing VPC and Kafka endpoints. Network topology and MSK authentication remain platform-level concerns instead of being recreated or weakened inside each application repository.
+- **Database invariants are executable:** PostgreSQL 16 integration tests run every Flyway migration and prove tenant idempotency, single-active-rule enforcement, and review evidence constraints against the actual database engine.
+- **Traceable release artifacts:** CI labels the container with the source revision and publishes the executable JAR with its SHA-256 checksum, linking deployable bytes back to a tested commit.
 
 ## Evolution plan
 
-Subsequent increments focus on final production hardening and release evidence.
+The final increment packages the complete recruiter-facing launch release.
