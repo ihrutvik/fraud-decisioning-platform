@@ -39,6 +39,6 @@
 - **Database invariants are executable:** PostgreSQL 16 integration tests run every Flyway migration and prove tenant idempotency, single-active-rule enforcement, and review evidence constraints against the actual database engine.
 - **Traceable release artifacts:** CI labels the container with the source revision and publishes the executable JAR with its SHA-256 checksum, linking deployable bytes back to a tested commit.
 
-## Evolution plan
+## Release status
 
-The final increment packages the complete recruiter-facing launch release.
+Version 1.0.0 completes the reference implementation. Future work is intentionally documented as production adoption work—managed workforce identity, signed model artifacts, four-eyes rule approval, restore drills, and organization-specific MSK authentication—rather than implied as already delivered.

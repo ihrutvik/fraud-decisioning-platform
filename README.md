@@ -2,9 +2,29 @@
 
 A production-minded Java 17 service that makes explainable fraud decisions on the transaction path, persists immutable evidence, and reliably distributes decision events through Kafka.
 
+[![CI](https://github.com/ihrutvik/fraud-decisioning-platform/actions/workflows/ci.yml/badge.svg)](https://github.com/ihrutvik/fraud-decisioning-platform/actions/workflows/ci.yml)
+![Java 17](https://img.shields.io/badge/Java-17-ED8B00)
+![Spring Boot 3.5](https://img.shields.io/badge/Spring_Boot-3.5-6DB33F)
+![License MIT](https://img.shields.io/badge/license-MIT-blue)
+
 ## Why recruiters should care
 
 This repository demonstrates backend engineering beyond CRUD: tenant-scoped idempotency, deterministic risk scoring, auditable reason codes, transactional messaging, concurrency-safe workers, schema migrations, and failure-aware API design.
+
+## Engineering highlights
+
+| Production problem | Design response |
+|---|---|
+| A retried checkout must not create a second decision | Tenant-scoped idempotency plus canonical SHA-256 payload fingerprints |
+| Database state and Kafka events must not diverge | Transactional outbox with concurrent PostgreSQL leasing |
+| Velocity checks must work across replicas | Atomic Redis sorted-set windows implemented through Lua |
+| Redis failure must not consume the checkout latency budget | Explicit degradation policy and closed/open/half-open circuit breaker |
+| Fraud logic must remain explainable and reproducible | Stable reason codes and immutable rule-set versions on every decision |
+| Candidate models must be evaluated safely | Shadow scoring with persisted comparison evidence and drift metrics |
+| Human decisions must remain attributable | Exclusive analyst leases and immutable review audit history |
+| Delayed outcomes must feed model validation safely | Idempotent verified-feedback ingestion with source-reference deduplication |
+
+The repository is deliberately original portfolio code. It does not contain or reproduce proprietary employer implementations.
 
 ## Current capabilities
 
@@ -75,9 +95,15 @@ docker compose up --build
 
 The API is available on `http://localhost:8080`; health is exposed at `/actuator/health`, Jaeger at `http://localhost:16686`, Prometheus at `http://localhost:9090`, and Grafana at `http://localhost:3000`. Local examples use `demo-merchant-key` and `demo-analyst-key`; production configuration accepts only their SHA-256 digests through environment variables.
 
-## Production direction
+## Verification
 
-This is the thirteenth increment of a fourteen-step build. The final increment will package the recruiter-facing launch release.
+Every push compiles and tests the service, starts PostgreSQL 16 through Testcontainers, validates all Flyway migrations and database invariants, validates Terraform and Docker Compose, parses the k6 suites, builds the production container, and publishes a checksummed JAR artifact.
+
+The k6 profile defines regression budgets of less than 0.5% HTTP failures, p95 below 200 ms, and p99 below 500 ms on the reference local topology. These are executable acceptance thresholds, not fabricated production benchmark claims.
+
+## Project status
+
+Version `1.0.0` is complete and GitHub-ready. Start with the [five-minute engineering brief](docs/portfolio-brief.md), then use the [launch kit](docs/launch.md) for the repository description and LinkedIn announcement.
 
 ## Technology
 
@@ -85,4 +111,4 @@ Java 17 · Spring Boot 3.5 · PostgreSQL 16 · Kafka · Redis · Flyway · Prome
 
 ## License
 
-MIT
+[MIT](LICENSE). Contributions are described in [CONTRIBUTING.md](CONTRIBUTING.md).

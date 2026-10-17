@@ -17,12 +17,12 @@ jobs:
       - run: docker run --rm -v "$PWD/load:/scripts:ro" grafana/k6:0.54.0 inspect /scripts/idempotency-smoke.js
       - run: docker build --label org.opencontainers.image.revision=${{ github.sha }} -t fraud-decisioning-platform:${{ github.sha }} .
       - name: Create artifact checksum
-        run: sha256sum target/fraud-decisioning-platform-0.1.0.jar > target/SHA256SUMS
+        run: sha256sum target/fraud-decisioning-platform-1.0.0.jar > target/SHA256SUMS
       - uses: actions/upload-artifact@v4
         with:
           name: fraud-decisioning-platform-${{ github.sha }}
           path: |
-            target/fraud-decisioning-platform-0.1.0.jar
+            target/fraud-decisioning-platform-1.0.0.jar
             target/SHA256SUMS
           if-no-files-found: error
           retention-days: 14

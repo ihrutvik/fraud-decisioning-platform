@@ -4,7 +4,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>dev.hrutvik.portfolio</groupId>
   <artifactId>fraud-decisioning-platform</artifactId>
-  <version>0.1.0</version>
+  <version>1.0.0</version>
   <name>Fraud Decisioning Platform</name>
   <description>Explainable real-time fraud decisions with durable evidence and event delivery</description>
   <parent><groupId>org.springframework.boot</groupId><artifactId>spring-boot-starter-parent</artifactId><version>3.5.5</version><relativePath/></parent>
