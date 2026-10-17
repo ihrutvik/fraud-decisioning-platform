@@ -18,7 +18,7 @@ jobs:
       - run: docker build --label org.opencontainers.image.revision=${{ github.sha }} -t fraud-decisioning-platform:${{ github.sha }} .
       - name: Create artifact checksum
         run: sha256sum target/fraud-decisioning-platform-1.0.0.jar > target/SHA256SUMS
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: fraud-decisioning-platform-${{ github.sha }}
           path: |
